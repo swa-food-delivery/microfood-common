@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  eureka:
+    image: microfood/eureka
+    container_name: microfood-eureka
+    hostname: ${EUREKA_HOST}
+    networks:
+      - microfood-network
+    ports:
+      - 8182:8182
+    environment:
+      EUREKA_HOST: ${EUREKA_HOST}
+  gateway:
+    image: microfood/gateway
+    container_name: microfood-gateway
+    hostname: ${GATEWAY_HOST}
+    networks:
+      - microfood-network
+    ports:
+      - 8180:8180
+    environment:
+      EUREKA_URL: ${EUREKA_URL}
+      GATEWAY_HOST: ${GATEWAY_HOST}
+  orders-service:
+    image: microfood/orders-service
+    container_name: microfood-orders-service
+    hostname: ${ORDERS_HOST}
+    networks:
+      - microfood-network
+    ports:
+      - 8183:8183
+    environment:
+      EUREKA_URL: ${EUREKA_URL}
+      ORDERS_HOST: ${ORDERS_HOST}
+networks:
+  microfood-network:
+    name: microfood-network
