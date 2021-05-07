@@ -7,7 +7,7 @@ services:
     networks:
       - microfood-network
     ports:
-      - 8182:8182
+      - "8182:8182"
     environment:
       EUREKA_HOST: ${EUREKA_HOST}
   gateway:
@@ -17,7 +17,7 @@ services:
     networks:
       - microfood-network
     ports:
-      - 8180:8180
+      - "8180:8180"
     environment:
       EUREKA_URL: ${EUREKA_URL}
       GATEWAY_HOST: ${GATEWAY_HOST}
@@ -27,11 +27,33 @@ services:
     hostname: ${ORDERS_HOST}
     networks:
       - microfood-network
+      - orders-network
     ports:
-      - 8183:8183
+      - "8183:8183"
     environment:
       EUREKA_URL: ${EUREKA_URL}
       ORDERS_HOST: ${ORDERS_HOST}
+      ORDERS_DB_HOST: ${ORDERS_DB_HOST}
+      ORDERS_DB_PORT: ${ORDERS_DB_PORT}
+  orders-db:
+    image: postgres:latest
+    container_name: microfood-orders-db
+    hostname: ${ORDERS_DB_HOST}
+    networks:
+      - orders-network
+    volumes:
+      - "orders-db:/var/lib/postgresql/data"
+    ports:
+      - "8283:8080"
+      - "54323:5432"
+    environment:
+      POSTGRES_USER: orders
+      POSTGRES_PASSWORD: orders
 networks:
   microfood-network:
     name: microfood-network
+  # having a network for db simplifies working with ports
+  orders-network:
+    name: orders-network
+volumes:
+  orders-db:

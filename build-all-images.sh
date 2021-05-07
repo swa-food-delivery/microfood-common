@@ -1,6 +1,6 @@
 #!/bin/bash
 dockerfiles=("microfood/gateway:../gateway"
-             "microfood/orders:../order-service/orders"
+             "microfood/orders-service:../order-service/orders"
              "microfood/eureka:../eureka-server")
 
 for dockerfile in "${dockerfiles[@]}" ; do
