@@ -49,11 +49,43 @@ services:
     environment:
       POSTGRES_USER: orders
       POSTGRES_PASSWORD: orders
+  tickets-service:
+    image: microfood/tickets-service
+    container_name: microfood-tickets-service
+    hostname: ${TICKETS_HOST}
+    networks:
+      - microfood-network
+      - tickets-network
+    ports:
+      - "8184:8184"
+    environment:
+      EUREKA_URL: ${EUREKA_URL}
+      TICKETS_HOST: ${TICKETS_HOST}
+      TICKETS_DB_HOST: ${TICKETS_DB_HOST}
+      TICKETS_DB_PORT: ${TICKETS_DB_PORT}
+  tickets-db:
+    image: postgres:latest
+    container_name: microfood-tickets-db
+    hostname: ${TICKETS_DB_HOST}
+    networks:
+      - tickets-network
+    volumes:
+      - "tickets-db:/var/lib/postgresql/data"
+    ports:
+      - "8284:8080"
+      - "54324:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
 networks:
   microfood-network:
     name: microfood-network
   # having a network for db simplifies working with ports
   orders-network:
     name: orders-network
+  tickets-network:
+    name: tickets-network
+
 volumes:
   orders-db:
+  tickets-db:

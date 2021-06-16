@@ -1,7 +1,8 @@
 #!/bin/bash
 dockerfiles=("microfood/gateway:../gateway"
              "microfood/orders-service:../order-service/orders"
-             "microfood/eureka:../eureka-server")
+             "microfood/eureka:../eureka-server"
+             "microfood/tickets-service:../restaurant-tickets-service")
 
 for dockerfile in "${dockerfiles[@]}" ; do
     image_name="${dockerfile%%:*}"
