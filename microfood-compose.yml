@@ -47,8 +47,8 @@ services:
       - "8283:8080"
       - "54323:5432"
     environment:
-      POSTGRES_USER: orders
-      POSTGRES_PASSWORD: orders
+      POSTGRES_USER: ${ORDERS_DB_USER}
+      POSTGRES_PASSWORD: ${ORDERS_DB_PWD}
   tickets-service:
     image: microfood/tickets-service
     container_name: microfood-tickets-service
@@ -75,8 +75,36 @@ services:
       - "8284:8080"
       - "54324:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: ${TICKETS_DB_USER}
+      POSTGRES_PASSWORD: ${TICKETS_DB_PWD}
+  restaurants-service:
+    image: microfood/restaurant-service
+    container_name: microfood-restaurants-service
+    hostname: ${RESTAURANTS_HOST}
+    networks:
+      - microfood-network
+      - restaurants-network
+    ports:
+      - "8185:4444"
+    environment:
+      EUREKA_URL: ${EUREKA_URL}
+      RESTAURANTS_HOST: ${RESTAURANTS_HOST}
+      RESTAURANTS_DB_HOST: ${RESTAURANTS_DB_HOST}
+      RESTAURANTS_DB_PORT: ${RESTAURANTS_DB_PORT}
+  restaurant-db:
+    image: postgres:latest
+    container_name: microfood-restaurants-db
+    hostname: ${RESTAURANTS_DB_HOST}
+    networks:
+      - restaurants-network
+    volumes:
+      - "restaurants-db:/var/lib/postgresql/data"
+    ports:
+      - "8285:8080"
+      - "54325:5432"
+    environment:
+      POSTGRES_USER: ${RESTAURANTS_DB_USER}
+      POSTGRES_PASSWORD: ${RESTAURANTS_DB_PWD}
 networks:
   microfood-network:
     name: microfood-network
@@ -85,7 +113,10 @@ networks:
     name: orders-network
   tickets-network:
     name: tickets-network
+  restaurants-network:
+    name: restaurants-network
 
 volumes:
   orders-db:
   tickets-db:
+  restaurants-db:

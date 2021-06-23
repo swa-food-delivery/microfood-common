@@ -1,0 +1,64 @@
+workspace {
+
+    model {
+        customer = person "Customer" "" "Person"
+        employee = person "Restaurant Employee" "" "Person"
+        softwareSystem = softwareSystem "Microfood" {
+            gateway = container "Gateway" "Application gateway" "spring application" "app"
+            eurekaServer = container "Erureka Server" "Discovery service" "spring application" "app"
+
+            orderServiceGroup = group "Orders Service"{
+                 ordersService = container "Orders Service" "Service responsible for processing orders" "spring application" "app"
+                 ordersDb = container "Orders Database" "" "postgres" "db"
+            }
+
+            restaurantGroup = group "Restaurants Service" {
+                restaurantService = container "Restaurant Service" "Service responsible for managing restaurants" "spring application" "app"
+                restaurantDb = container "Restaurants Database" "" "postgres" "db"
+            }
+
+           ticketGroups = group "Restaurant Ticket Service" {
+                ticketService = container "Restaurant Ticket Service" "Service responsible for managing order preparation" "spring application" "app"
+                ticketDb = container "Restaurant Tickets Database" "" "postgres" "db"
+           }
+
+         }
+
+        customer -> gateway "Uses"
+        employee -> gateway "Uses"
+
+        ordersService -> ordersDb "Stores data"
+        restaurantService -> restaurantDb "Stores data"
+        ticketService -> ticketDb "Stores data"
+
+        gateway -> ordersService "Redirects to"
+        gateway -> restaurantService "Redirects to"
+        gateway -> ticketService "Redirects to"
+        gateway -> eurekaServer "Uses for service discovery"
+
+        ordersService -> restaurantService "Communicates with"
+        ordersService -> ticketService "Communicates with"
+        ticketService -> ordersService "Communicates with"
+    }
+
+    views {
+        styles {
+            element db {
+                shape Cylinder
+                background #85bbf0
+                color #000000
+            }
+            element "Person" {
+                background #08427b
+                color #ffffff
+                fontSize 22
+                shape Person
+            }
+            element "app" {
+                background #1168bd
+                color #ffffff
+            }
+            }
+        }
+
+}
